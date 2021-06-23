@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<style>
+    
+   .introduction {
+        background-color: azure;
+        box-shadow: 0px 0px 5px gainsboro;
+        margin: 0px;
+        padding: 5px;
+        z-index: 5;
+        display: block;
+        max-width: auto;
+        max-height: 200px;
+        text-align: center;
+    }
+
+</style>
+
+<html lang="en">
+
+<title>Animacja sześcianów</title>
+<div class= "introduction">
+    <h2>Animacja 3D sześcianów oscylujących wokół własnej osi</h2>
+    <h3>Wykonanie: Bartosz Kiełczewski</h3>
+    <h4>Grafika komputerowa</h4>
+    <h4>Wyższa Szkoła Ekonomiczna w Białymstoku</h4>
+</div>
+
+<body>
+
+<script src="lib/three.js"></scriptsrc></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+<script>
+
+    //Creating scene
+    const scene = new THREE.Scene();
+
+    //Creating camera which determinates what we see
+	const camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    //Creating renderer
+	const renderer = new THREE.WebGLRenderer({ antialias: true });
+	renderer.setSize( window.innerWidth, window.innerHeight * 0.8);
+
+    //Sending renderer to HTML canvas
+    document.body.appendChild( renderer.domElement );
+
+    //Creating basic parameters for both cubes
+    const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+
+    //Creating cubes
+    const cube1 = new THREE.Mesh(geometry, material);
+    const cube2 = new THREE.Mesh(geometry, material);
+
+    //Setting starting positions of the cubes
+    cube1.position.set (0,0,0);
+    cube2.position.set (0,5,0);
+    
+    //Adding cubes to scene
+    scene.add(cube1);
+    scene.add(cube2);
+    
+    //Adding x and y axes to scene
+    scene.add( new THREE.AxesHelper( 5 ) );
+
+    //Setting camera position
+    camera.position.z = 5;
+    camera.position.y = 0,5;
+    
+    //Constructing starting point and finish point for cubes moves
+    const startCube = function (){
+
+    const cube1Head = new TWEEN.Tween(cube1.position)
+    .to ({x: 5}, 10000);
+    const cube1Back = new TWEEN.Tween(cube1.position)
+    .to ({x: -5}, 10000);
+
+    const cube2Head = new TWEEN.Tween(cube2.position)
+    .to ({y: -5}, 20000);
+    const cube2Back = new TWEEN.Tween(cube2.position)
+    .to ({y: 5}, 20000);
+
+    //Looping the movement
+    cube1Head.chain(cube1Back);
+    cube1Back.chain(cube1Head);
+    cube1Head.start();
+
+    cube2Head.chain(cube2Back);
+    cube2Back.chain(cube2Head);
+    cube2Head.start();
+    };
+
+    startCube();
+    
+    //Main function which starting animation
+    const animate = function () {
+        requestAnimationFrame( animate );
+
+        cube1.rotation.x += 0.01;
+        cube2.rotation.x += 0.01;
+        TWEEN.update();
+        
+
+        renderer.render( scene, camera );
+    };
+
+    animate();
+        </script>
+ 
+</body>
+</html>
